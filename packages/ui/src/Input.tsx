@@ -9,5 +9,7 @@ export const Input = styled(TInput, {
 
     focusStyle: {
         borderColor: '$primary',
+        borderWidth: 2,
     },
+    borderRadius: '$4', // 12px for inputs
 })

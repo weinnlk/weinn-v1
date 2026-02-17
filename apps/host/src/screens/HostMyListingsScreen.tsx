@@ -54,44 +54,30 @@ export function HostMyListingsScreen({
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.background.get() }}>
-            <View style={{ paddingHorizontal: 16, paddingTop: insets.top + 8, paddingBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: theme.background.get(), borderBottomWidth: 1, borderBottomColor: theme.borderColor.get() }}>
-                <View style={{ width: 48 }} />
-                <Text variant="title" style={{ fontWeight: 'bold' }}>My Listings</Text>
-                <XStack>
-                    <Button variant="ghost" icon={<Icon name="magnify" size={24} color={theme.color.get()} />} onPress={() => { }} width={48} height={48} />
-                    <Button variant="ghost" icon={<Icon name="refresh" size={24} color={theme.color.get()} />} onPress={onReload} width={48} height={48} />
+            <View style={{ paddingHorizontal: 16, paddingTop: insets.top + 16, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: theme.background.get() }}>
+                <Text variant="header" style={{ fontSize: 32, fontWeight: '800', letterSpacing: -1 }}>My Listings</Text>
+                <XStack gap="$2">
+                    <IconButton icon="magnify" size={24} color={theme.color.get()} />
+                    <IconButton icon="refresh" size={24} color={theme.color.get()} onPress={onReload} />
                 </XStack>
             </View>
 
-            <View style={{ padding: 16 }}>
-                <XStack backgroundColor="$gray3" borderRadius="$4" padding="$1">
-                    <Button
-                        flex={1}
-                        variant={filter === 'all' ? 'primary' : 'ghost'}
-                        onPress={() => setFilter('all')}
-                        size="small"
-                        chromeless={filter !== 'all'}
-                    >
-                        All
-                    </Button>
-                    <Button
-                        flex={1}
-                        variant={filter === 'active' ? 'primary' : 'ghost'}
-                        onPress={() => setFilter('active')}
-                        size="small"
-                        chromeless={filter !== 'active'}
-                    >
-                        Active
-                    </Button>
-                    <Button
-                        flex={1}
-                        variant={filter === 'draft' ? 'primary' : 'ghost'}
-                        onPress={() => setFilter('draft')}
-                        size="small"
-                        chromeless={filter !== 'draft'}
-                    >
-                        Drafts
-                    </Button>
+            <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}>
+                <XStack backgroundColor="$gray5" borderRadius="$4" padding={4}>
+                    {(['all', 'active', 'draft'] as const).map((f) => (
+                        <Button
+                            key={f}
+                            flex={1}
+                            size="$3"
+                            variant={filter === f ? 'primary' : 'ghost'}
+                            onPress={() => setFilter(f)}
+                            borderRadius="$3"
+                            // @ts-ignore
+                            fontWeight={filter === f ? '700' : '500'}
+                        >
+                            {f.charAt(0).toUpperCase() + f.slice(1)}
+                        </Button>
+                    ))}
                 </XStack>
             </View>
 
@@ -104,49 +90,51 @@ export function HostMyListingsScreen({
                     const isDraft = item.status === 'draft' || item.status === 'rejected';
 
                     return (
-                        <Card variant="filled" style={{ borderRadius: 12, backgroundColor: theme.surface.get(), overflow: 'hidden' }}>
-                            <View style={{ flexDirection: 'row' }}>
-                                {/* Image Section */}
-                                <View style={{ width: 110, height: 110, backgroundColor: theme.surfaceVariant.get() }}>
-                                    {imageUri ? (
-                                        <Image source={{ uri: imageUri }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
-                                    ) : (
-                                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                                            <Icon name="image-off-outline" size={32} color={theme.gray8.get()} />
-                                        </View>
-                                    )}
-                                </View>
-
-                                {/* Content Section */}
-                                <View style={{ flex: 1, padding: 12, justifyContent: 'space-between' }}>
-                                    <View>
-                                        <Text variant="body" style={{ fontWeight: 'bold' }} numberOfLines={1}>
-                                            {item.title ?? 'Untitled Property'}
-                                        </Text>
-                                        <Text variant="label" style={{ color: theme.gray11.get() }}>
-                                            Updated {new Date(item.updated_at).toLocaleDateString()}
-                                        </Text>
+                    return (
+                        <Card variant="outlined" style={{ borderRadius: 12, backgroundColor: theme.background.get(), overflow: 'hidden', padding: 0, flexDirection: 'row', borderColor: theme.outlineVariant.get() }}>
+                            {/* Image Section */}
+                            <View style={{ width: 120, backgroundColor: theme.gray5.get() }}>
+                                {imageUri ? (
+                                    <Image source={{ uri: imageUri ?? undefined }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+                                ) : (
+                                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                        <Icon name="image-off-outline" size={32} color={theme.gray8.get()} />
                                     </View>
+                                )}
+                            </View>
 
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                            {/* Content Section */}
+                            <View style={{ flex: 1, padding: 16, justifyContent: 'space-between', gap: 8 }}>
+                                <View>
+                                    <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={4}>
                                         <Chip
-                                            selected={!isDraft}
+                                            variant="filled"
+                                            backgroundColor={item.status === 'approved' ? '$success' : item.status === 'draft' ? '$gray5' : '$warning'}
+                                            color={item.status === 'approved' ? 'white' : item.status === 'draft' ? '$gray11' : 'black'}
                                         >
                                             {item.status === 'draft' ? 'Draft' : item.status === 'submitted' ? 'Pending' : item.status === 'approved' ? 'Active' : item.status}
                                         </Chip>
-
-                                        <Button
-                                            variant="outline"
-                                            size="small"
-                                            onPress={() => navigation.navigate('WizardV3Start', { propertyId: item.id })}
-                                        >
-                                            {isDraft ? 'Resume' : 'Edit'}
-                                        </Button>
-                                    </View>
+                                    </XStack>
+                                    <Text variant="body" style={{ fontWeight: '800', fontSize: 16 }} numberOfLines={1}>
+                                        {item.title ?? 'Untitled Property'}
+                                    </Text>
+                                    <Text variant="label" style={{ color: theme.gray11.get(), fontSize: 13, marginTop: 2 }}>
+                                        Updated {new Date(item.updated_at).toLocaleDateString()}
+                                    </Text>
                                 </View>
+
+                                <Button
+                                    variant="outline"
+                                    size="$3"
+                                    onPress={() => navigation.navigate('WizardV3Start', { propertyId: item.id })}
+                                    borderColor="$outline"
+                                >
+                                    {isDraft ? 'Resume Editing' : 'Edit Details'}
+                                </Button>
                             </View>
                         </Card>
                     );
+
                 }}
                 ListEmptyComponent={
                     <View style={{ padding: 32, alignItems: 'center', gap: 16, marginTop: 40 }}>

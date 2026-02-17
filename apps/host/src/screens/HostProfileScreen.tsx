@@ -2,25 +2,28 @@ import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
-import { useTheme, Text, Card, Button, Chip, XStack, YStack, Avatar, Divider } from '@weinn/ui';
+import { useTheme, Text, Card, Button, Chip, XStack, YStack, Avatar, Divider, IconButton } from '@weinn/ui';
 // @ts-ignore
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { HostPaymentsScreen } from './HostPaymentsScreen';
 
-const ListItem = ({ title, description, leftIcon, rightIcon, onPress }: { title: string, description?: string, leftIcon?: string, rightIcon?: string, onPress: () => void }) => {
+const ListItem = ({ title, description, leftIcon, rightIcon, onPress, isLast }: { title: string, description?: string, leftIcon?: string, rightIcon?: string, onPress: () => void, isLast?: boolean }) => {
     const theme = useTheme();
     return (
-        <Button variant="ghost" onPress={onPress} style={{ paddingVertical: 12, height: 'auto', justifyContent: 'flex-start' }}>
-            <XStack alignItems="center" width="100%">
-                {leftIcon && <Icon name={leftIcon} size={24} color={theme.color.get()} />}
-                <YStack flex={1} marginLeft={leftIcon ? "$3" : "$0"}>
-                    <Text variant="body" style={{ fontWeight: 'bold' }}>{title}</Text>
-                    {description && <Text variant="label" style={{ color: theme.gray11.get() }}>{description}</Text>}
-                </YStack>
-                {rightIcon && <Icon name={rightIcon} size={24} color={theme.gray8.get()} />}
-            </XStack>
-        </Button>
+        <View>
+            <Button variant="ghost" onPress={onPress} style={{ paddingVertical: 16, height: 'auto', justifyContent: 'flex-start', borderRadius: 0 }}>
+                <XStack alignItems="center" width="100%" gap="$3">
+                    {leftIcon && <Icon name={leftIcon} size={24} color={theme.color.get()} />}
+                    <YStack flex={1}>
+                        <Text variant="body" style={{ fontWeight: '600', fontSize: 16 }}>{title}</Text>
+                        {description && <Text variant="label" style={{ color: theme.gray11.get(), marginTop: 2 }}>{description}</Text>}
+                    </YStack>
+                    {rightIcon && <Icon name={rightIcon} size={20} color={theme.gray8.get()} />}
+                </XStack>
+            </Button>
+            {!isLast && <Divider marginVertical={0} />}
+        </View>
     )
 }
 
@@ -42,9 +45,9 @@ export function HostProfileScreen({ profileName, onSignOut }: { profileName: str
 
         return (
             <View style={{ flex: 1, backgroundColor: theme.background.get() }}>
-                <View style={{ paddingHorizontal: 16, paddingTop: insets.top + 8, paddingBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: theme.surface.get(), borderBottomWidth: 1, borderBottomColor: theme.borderColor.get() }}>
+                <View style={{ paddingHorizontal: 16, paddingTop: insets.top + 8, paddingBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: theme.background.get(), borderBottomWidth: 1, borderBottomColor: theme.borderColor.get() }}>
                     <Text variant="title" style={{ fontWeight: 'bold' }}>Pay commission</Text>
-                    <Button variant="ghost" icon={<Icon name="close" size={24} color={theme.color.get()} />} onPress={closeCheckout} width={48} height={48} />
+                    <IconButton icon="close" onPress={closeCheckout} />
                 </View>
                 <View style={{ flex: 1 }}>
                     <WebView
@@ -92,90 +95,89 @@ export function HostProfileScreen({ profileName, onSignOut }: { profileName: str
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.background.get() }}>
-            <View style={{ paddingHorizontal: 16, paddingTop: insets.top + 8, paddingBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: theme.surface.get(), borderBottomWidth: 1, borderBottomColor: theme.borderColor.get() }}>
-                <Text variant="title" style={{ fontWeight: 'bold' }}>Profile</Text>
-                <Button variant="ghost" icon={<Icon name="cog-outline" size={24} color={theme.color.get()} />} onPress={() => { }} width={48} height={48} />
+            <View style={{ paddingHorizontal: 16, paddingTop: insets.top + 16, paddingBottom: 16, backgroundColor: theme.background.get() }}>
+                <Text variant="header" style={{ fontSize: 32, fontWeight: '800', letterSpacing: -1 }}>Profile</Text>
             </View>
 
             <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}>
                 <View style={{ padding: 24, alignItems: 'center', gap: 16 }}>
                     <View>
-                        <Avatar size="$8" circular backgroundColor="$primaryContainer">
-                            <Text variant="title" style={{ fontSize: 32, color: theme.onPrimaryContainer.get() }}>{initials}</Text>
-                        </Avatar>
-                        <View style={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: theme.secondaryContainer.get(), borderRadius: 12, padding: 4 }}>
-                            <Icon name="pencil" size={20} color={theme.onSecondaryContainer.get()} />
+                        <Avatar size="$8" circular fallback={<Text variant="header" fontSize={32}>{initials}</Text>} />
+                        <View style={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: theme.background.get(), borderRadius: 20, padding: 2 }}>
+                            <View style={{ backgroundColor: 'black', borderRadius: 18, padding: 6 }}>
+                                <Icon name="pencil" size={16} color="white" />
+                            </View>
                         </View>
                     </View>
 
                     <View style={{ alignItems: 'center', gap: 4 }}>
-                        <Text variant="title" style={{ fontWeight: 'bold', fontSize: 24 }}>{profileName}</Text>
+                        <Text variant="header" style={{ fontWeight: '800', fontSize: 24 }}>{profileName}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                            <Chip icon={<Icon name="check-decagram" size={16} color={theme.onTertiaryContainer.get()} />} style={{ backgroundColor: theme.tertiaryContainer.get() }}>
-                                <Text style={{ color: theme.onTertiaryContainer.get(), fontSize: 12 }}>Verified Host</Text>
-                            </Chip>
+                            <XStack backgroundColor="black" paddingHorizontal="$2" paddingVertical="$1" borderRadius="$4" alignItems="center" gap="$1">
+                                <Icon name="check-decagram" size={14} color="white" />
+                                <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>Verified Host</Text>
+                            </XStack>
                             <Text variant="body" style={{ color: theme.gray11.get() }}>Joined 2024</Text>
                         </View>
                     </View>
                 </View>
 
-                <View style={{ paddingHorizontal: 16 }}>
-                    <Text variant="label" style={{ color: theme.primary.get(), fontWeight: 'bold', marginBottom: 8, marginLeft: 16 }}>Account Settings</Text>
-                    <Card variant="filled" style={{ borderRadius: 16, overflow: 'hidden', backgroundColor: theme.surface.get(), padding: 0 }}>
-                        <ListItem
-                            title="Personal Information"
-                            leftIcon="account-circle-outline"
-                            rightIcon="chevron-right"
-                            onPress={() => { }}
-                        />
-                        <Divider />
-                        <ListItem
-                            title="Payments & Commission"
-                            description="Manage monthly dues"
-                            leftIcon="credit-card-outline"
-                            rightIcon="chevron-right"
-                            onPress={() => setShowPayments(true)}
-                        />
-                        <Divider />
-                        <ListItem
-                            title="Notifications"
-                            leftIcon="bell-outline"
-                            rightIcon="chevron-right"
-                            onPress={() => { }}
-                        />
-                    </Card>
+                <View style={{ paddingHorizontal: 16, gap: 24 }}>
+                    <YStack gap="$2">
+                        <Text variant="label" style={{ color: theme.gray11.get(), fontWeight: '700', marginLeft: 4, textTransform: 'uppercase', fontSize: 12 }}>Account</Text>
+                        <Card variant="outlined" style={{ borderRadius: 16, overflow: 'hidden', backgroundColor: theme.background.get(), padding: 0, borderColor: theme.outlineVariant.get() }}>
+                            <ListItem
+                                title="Personal Information"
+                                leftIcon="account-circle-outline"
+                                rightIcon="chevron-right"
+                                onPress={() => { }}
+                            />
+                            <ListItem
+                                title="Payments & Commission"
+                                description="Manage monthly dues"
+                                leftIcon="credit-card-outline"
+                                rightIcon="chevron-right"
+                                onPress={() => setShowPayments(true)}
+                            />
+                            <ListItem
+                                title="Notifications"
+                                leftIcon="bell-outline"
+                                rightIcon="chevron-right"
+                                onPress={() => { }}
+                                isLast
+                            />
+                        </Card>
+                    </YStack>
 
-                    <View style={{ height: 24 }} />
-
-                    <Text variant="label" style={{ color: theme.primary.get(), fontWeight: 'bold', marginBottom: 8, marginLeft: 16 }}>Support</Text>
-                    <Card variant="filled" style={{ borderRadius: 16, overflow: 'hidden', backgroundColor: theme.surface.get(), padding: 0 }}>
-                        <ListItem
-                            title="Host Help Center"
-                            leftIcon="help-circle-outline"
-                            rightIcon="chevron-right"
-                            onPress={() => { }}
-                        />
-                        <Divider />
-                        <ListItem
-                            title="Give us Feedback"
-                            leftIcon="message-alert-outline"
-                            rightIcon="chevron-right"
-                            onPress={() => { }}
-                        />
-                    </Card>
-
-                    <View style={{ height: 32 }} />
+                    <YStack gap="$2">
+                        <Text variant="label" style={{ color: theme.gray11.get(), fontWeight: '700', marginLeft: 4, textTransform: 'uppercase', fontSize: 12 }}>Support</Text>
+                        <Card variant="outlined" style={{ borderRadius: 16, overflow: 'hidden', backgroundColor: theme.background.get(), padding: 0, borderColor: theme.outlineVariant.get() }}>
+                            <ListItem
+                                title="Host Help Center"
+                                leftIcon="help-circle-outline"
+                                rightIcon="chevron-right"
+                                onPress={() => { }}
+                            />
+                            <ListItem
+                                title="Give us Feedback"
+                                leftIcon="message-alert-outline"
+                                rightIcon="chevron-right"
+                                onPress={() => { }}
+                                isLast
+                            />
+                        </Card>
+                    </YStack>
 
                     <Button
                         variant="outline"
                         onPress={onSignOut}
-                        style={{ borderColor: theme.error.get(), marginHorizontal: 16, height: 48 }}
+                        style={{ borderColor: theme.error.get(), height: 48, borderRadius: 12 }}
                         icon={<Icon name="logout" size={20} color={theme.error.get()} />}
                     >
                         <Text style={{ color: theme.error.get(), fontWeight: 'bold' }}>Sign Out</Text>
                     </Button>
 
-                    <Text variant="label" style={{ color: theme.gray11.get(), textAlign: 'center', marginTop: 16, opacity: 0.6 }}>
+                    <Text variant="label" style={{ color: theme.gray11.get(), textAlign: 'center', opacity: 0.6 }}>
                         Version 2.4.0 (Host)
                     </Text>
                 </View>

@@ -5,6 +5,8 @@ const StyledButton = styled(TButton, {
     // Default props
     size: '$4',
     backgroundColor: '$background',
+    borderRadius: '$3', // 8px for inner elements/buttons
+    pressStyle: { opacity: 0.9 }, // Subtle press effect by default
 
     variants: {
         variant: {

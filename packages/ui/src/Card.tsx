@@ -28,6 +28,6 @@ export const Card = styled(YStack, {
     } as const,
 
     defaultVariants: {
-        variant: 'elevated',
+        variant: 'outlined', // Modern flat look by default
     },
 })

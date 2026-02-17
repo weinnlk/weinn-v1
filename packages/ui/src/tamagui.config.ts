@@ -2,31 +2,59 @@ import { config as configBase } from '@tamagui/config/v3'
 import { createTamagui, createTokens } from 'tamagui'
 
 const weinnColors = {
-    primary: 'rgb(0, 108, 76)',
+    // Primary Brand
+    primary: '#000000', // WeInn Black
     onPrimary: '#FFFFFF',
-    primaryContainer: 'rgb(137, 248, 198)',
-    onPrimaryContainer: 'rgb(0, 33, 20)',
-    secondary: 'rgb(77, 99, 87)',
-    onSecondary: '#FFFFFF',
-    secondaryContainer: 'rgb(207, 232, 217)',
-    onSecondaryContainer: 'rgb(9, 32, 22)',
-    tertiary: 'rgb(62, 99, 115)',
-    onTertiary: '#FFFFFF',
-    tertiaryContainer: 'rgb(194, 232, 253)',
-    onTertiaryContainer: 'rgb(0, 31, 40)',
-    error: 'rgb(186, 26, 26)',
+
+    // Accent
+    secondary: '#F6BEFF', // Magenta Pink
+    onSecondary: '#000000',
+    secondaryContainer: '#FCE7FF', // Lighter Pink
+    onSecondaryContainer: '#590066', // Deep Magenta
+
+    // Neutrals
+    background: '#FFFFFF', // WeInn White
+    onBackground: '#171717', // Gray 900
+    surface: '#FFFFFF',
+    onSurface: '#171717',
+    surfaceVariant: '#FAFAFA', // Gray 25
+    onSurfaceVariant: '#404040', // Gray 700
+
+    // Borders & Dividers
+    outline: '#E5E5E5', // Gray 100
+    outlineVariant: '#D4D4D4', // Gray 200
+
+    // Semantic
+    success: '#008A05',
+    onSuccess: '#FFFFFF',
+    error: '#E00B41',
     onError: '#FFFFFF',
-    errorContainer: 'rgb(255, 218, 214)',
-    onErrorContainer: 'rgb(65, 0, 2)',
-    background: '#FBFDF9',
-    onBackground: '#191C1A',
-    surface: '#FBFDF9',
-    onSurface: '#191C1A',
-    surfaceVariant: '#DBE5DE',
-    onSurfaceVariant: '#404944',
-    outline: '#707974',
-    outlineVariant: '#BFC9C2',
+    errorContainer: '#FFE5EC',
+    onErrorContainer: '#8C0020',
+    warning: '#FFC800',
+    onWarning: '#000000',
+
+    // Extra Grays
+    gray25: '#FAFAFA',
+    gray50: '#F5F5F5',
+    gray100: '#E5E5E5',
+    gray200: '#D4D4D4',
+    gray300: '#A3A3A3',
+    gray400: '#737373',
+    gray500: '#525252',
+    gray600: '#404040',
+    gray700: '#262626',
+    gray800: '#171717',
+    gray900: '#0A0A0A',
+
     white: '#FFFFFF',
+    black: '#000000',
+
+    // Legacy maps for compatibility (can be refactored later)
+    tertiary: '#404040', // Gray 700
+    onTertiary: '#FFFFFF',
+    tertiaryContainer: '#F5F5F5', // Gray 50
+    onTertiaryContainer: '#171717',
 }
 
 const tokens = createTokens({
@@ -45,15 +73,24 @@ export const config = createTamagui({
         light: {
             ...configBase.themes.light,
             ...weinnColors,
-            // Map some basic keys to WeInn colors for consistency
             background: weinnColors.background,
             color: weinnColors.onBackground,
             borderColor: weinnColors.outline,
         },
-        // We can define a proper dark theme later, for now extends base or just adds tokens
         dark: {
             ...configBase.themes.dark,
             ...weinnColors,
+            // Invert core tokens for dark mode
+            primary: weinnColors.white,
+            onPrimary: weinnColors.black,
+            background: weinnColors.gray900,
+            onBackground: weinnColors.white,
+            surface: weinnColors.gray900,
+            onSurface: weinnColors.white,
+            surfaceVariant: weinnColors.gray800,
+            onSurfaceVariant: weinnColors.gray200,
+            outline: weinnColors.gray700,
+            borderColor: weinnColors.gray700,
         }
     }
 })
