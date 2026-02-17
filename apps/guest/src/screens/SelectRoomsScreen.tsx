@@ -30,7 +30,7 @@ export function SelectRoomsScreen({ route, navigation }: { route: any; navigatio
 
                 const { data: rtRows, error: rtErr } = await supabase
                     .from('room_types')
-                    .select('id, property_id, name, max_guests, bathroom_count, room_count, price_per_night, amenities')
+                    .select('id, property_id, name, max_guests, bathroom_count, room_count, price_per_night, amenities, smoking_allowed')
                     .eq('property_id', propertyId)
                     .order('created_at', { ascending: true });
                 if (rtErr) throw rtErr;
@@ -38,6 +38,8 @@ export function SelectRoomsScreen({ route, navigation }: { route: any; navigatio
 
                 const roomTypeIds = ((rtRows ?? []) as any[]).map((r) => r.id).filter(Boolean);
                 const thumbs: Record<string, string> = {};
+                const beds: Record<string, string[]> = {};
+
                 if (roomTypeIds.length) {
                     const { data: rtPhotoRows, error: rtPhotoErr } = await supabase
                         .from('room_type_photos')
@@ -53,6 +55,29 @@ export function SelectRoomsScreen({ route, navigation }: { route: any; navigatio
                         if (!thumbs[id]) thumbs[id] = uri;
                     }
 
+                    // Fetch beds
+                    const { data: bedRows, error: bedErr } = await supabase
+                        .from('beds')
+                        .select('room_type_id, bed_type, quantity')
+                        .in('room_type_id', roomTypeIds);
+
+                    if (!bedErr && bedRows) {
+                        const bedMap: Record<string, { type: string; count: number }[]> = {};
+                        for (const b of (bedRows as any[])) {
+                            const rid = b.room_type_id as string;
+                            if (!bedMap[rid]) bedMap[rid] = [];
+                            bedMap[rid].push({ type: b.bed_type, count: b.quantity });
+                        }
+
+                        // Format bed strings
+                        for (const [rid, configs] of Object.entries(bedMap)) {
+                            beds[rid] = configs.map(c => {
+                                const typeName = c.type.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                                return `${c.count} ${typeName} Bed${c.count > 1 ? 's' : ''}`;
+                            });
+                        }
+                    }
+
                     const { data: availRows, error: availErr } = await supabase.rpc('get_room_type_availability', { p_room_type_ids: roomTypeIds });
                     if (availErr) throw availErr;
                     const remaining: Record<string, number> = {};
@@ -64,7 +89,13 @@ export function SelectRoomsScreen({ route, navigation }: { route: any; navigatio
                     if (!cancelled) setRemainingById(remaining);
                 }
 
-                setRoomTypes((rtRows ?? []) as any[]);
+                // Attach formatted beds to room types for easier access in render
+                const enrichedRooms = ((rtRows ?? []) as any[]).map(r => ({
+                    ...r,
+                    formattedBeds: beds[r.id] ?? []
+                }));
+
+                setRoomTypes(enrichedRooms);
                 setRoomThumbById(thumbs);
             } catch {
                 if (!cancelled) {
@@ -164,14 +195,30 @@ export function SelectRoomsScreen({ route, navigation }: { route: any; navigatio
                                         </XStack>
 
                                         <Text variant="label" style={{ color: '$onSurfaceVariant', marginTop: 4 }}>
-                                            {[maxGuests != null ? `${maxGuests} Guests` : null, bathrooms != null ? `${bathrooms} Bath` : null].filter(Boolean).join(' • ')}
+                                            {[
+                                                maxGuests != null ? `${maxGuests} Guests` : null,
+                                                item.formattedBeds && item.formattedBeds.length > 0 ? item.formattedBeds.join(', ') : null,
+                                                bathrooms != null ? `${bathrooms} Bath` : null
+                                            ].filter(Boolean).join(' • ')}
                                         </Text>
 
-                                        {amenities.slice(0, 2).length > 0 && (
-                                            <Text variant="label" numberOfLines={1} style={{ color: '$onSurfaceVariant', marginTop: 2 }}>
-                                                {amenities.slice(0, 2).join(' • ')}
-                                            </Text>
-                                        )}
+                                        <XStack gap="$2" marginTop="$1" flexWrap="wrap">
+                                            {amenities.slice(0, 2).map((a, i) => (
+                                                <Text key={i} variant="label" style={{ color: '$onSurfaceVariant', fontSize: 11 }}>
+                                                    • {a}
+                                                </Text>
+                                            ))}
+                                            {item.smoking_allowed != null && (
+                                                <Text variant="label" style={{ color: item.smoking_allowed ? '$error' : '$success', fontSize: 11 }}>
+                                                    • {item.smoking_allowed ? 'Smoking Allowed' : 'Non-smoking'}
+                                                </Text>
+                                            )}
+                                            {item.room_count > 1 && (
+                                                <Text variant="label" style={{ color: '$onSurfaceVariant', fontSize: 11 }}>
+                                                    • {item.room_count} units
+                                                </Text>
+                                            )}
+                                        </XStack>
                                     </YStack>
 
                                     <XStack justifyContent="space-between" alignItems="flex-end" marginTop="$2">

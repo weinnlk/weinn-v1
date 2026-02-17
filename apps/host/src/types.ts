@@ -69,6 +69,11 @@ export type RoomDraftV3 = {
     amenities: string[];
     pricePerNight?: string;
     photoUris?: string[];
+
+    // New fields
+    quantity: number;
+    smokingAllowed?: boolean;
+    bedConfigurations?: { type: 'single' | 'double' | 'king' | 'super_king'; count: number }[];
 };
 
 export type ListingDraftV3 = {
@@ -141,3 +146,16 @@ export type ListingDraftV3 = {
     ownerPhone?: string;
     ownerEmail?: string;
 };
+
+export interface CalendarDayData {
+    date: string; // YYYY-MM-DD
+    room_type_id: string;
+    room_type_name: string;
+    total_inventory: number;
+    booked_count: number;
+    blocked_count: number;
+    available_count: number;
+    price: number;
+    is_custom_price: boolean;
+}
+

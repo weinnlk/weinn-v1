@@ -1,8 +1,10 @@
 import React from 'react';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { HostTodayScreen, ContentModalScreen } from './HostTodayScreen';
+import { HostCalendarScreen } from './HostCalendarScreen';
 import { HostBookingsScreen } from './HostBookingsScreen';
 import { HostListingsTab } from './HostListingsTab';
 import { HostMessagesTab } from './HostMessagesTab';
@@ -19,6 +21,7 @@ export function HostMain({ authUserId, profileName, onSignOut }: { authUserId: s
                     {() => (
                         <Tab.Navigator screenOptions={{ headerShown: false }}>
                             <Tab.Screen name="Today" options={{ title: 'Today' }}>{({ navigation }) => <HostTodayScreen navigation={navigation} />}</Tab.Screen>
+                            <Tab.Screen name="Calendar" options={{ title: 'Calendar', tabBarIcon: ({ color, size }) => <Icon name="calendar" color={color} size={size} /> }}>{() => <HostCalendarScreen />}</Tab.Screen>
                             <Tab.Screen name="Bookings" options={{ title: 'Bookings' }}>{() => <HostBookingsScreen />}</Tab.Screen>
                             <Tab.Screen
                                 name="Listings"

@@ -189,22 +189,26 @@ export function HostListingsTab({ authUserId }: { authUserId: string | null }) {
                 const roomsToUpsert = draftRooms.map(room => {
                     const roomPrice = room.pricePerNight?.trim() ? Number(room.pricePerNight) : null;
                     const bathroomType = room.bathroomType;
+                    const quantity = room.quantity ?? 1; // Default to 1 if not set
+                    const smokingAllowed = room.smokingAllowed ?? false; // Default to false
+
                     return {
                         id: room.id, // Always use the client-side UUID
                         property_id: propertyId,
                         name: room.name ?? null,
-                        room_count: 1,
+                        room_count: quantity,
                         max_guests: room.guestCount ?? null,
                         bathroom_type: bathroomType,
                         price_per_night: Number.isFinite(roomPrice as any) ? roomPrice : null,
                         amenities: room.amenities ?? [],
+                        smoking_allowed: smokingAllowed,
                     };
                 });
 
                 const { error: upsertErr } = await supabase.from('room_types').upsert(roomsToUpsert);
                 if (upsertErr) throw upsertErr;
 
-                // Update photos for ALL rooms
+                // Update photos and beds for ALL rooms
                 for (const room of draftRooms) {
                     // Nuke and replace photos
                     await supabase.from('room_type_photos').delete().eq('room_type_id', room.id);
@@ -212,6 +216,18 @@ export function HostListingsTab({ authUserId }: { authUserId: string | null }) {
                     if (roomUris.length) {
                         const photoRows = roomUris.map((uri, idx) => ({ room_type_id: room.id, uri, sort_order: idx }));
                         await supabase.from('room_type_photos').insert(photoRows);
+                    }
+
+                    // Nuke and replace beds
+                    await supabase.from('beds').delete().eq('room_type_id', room.id);
+                    const bedConfigs = room.bedConfigurations ?? [];
+                    if (bedConfigs.length) {
+                        const bedRows = bedConfigs.map((b) => ({
+                            room_type_id: room.id,
+                            bed_type: b.type,
+                            quantity: b.count,
+                        }));
+                        await supabase.from('beds').insert(bedRows);
                     }
                 }
             }
@@ -286,23 +302,24 @@ export function HostListingsTab({ authUserId }: { authUserId: string | null }) {
                 if (roomTypesErr) throw roomTypesErr;
 
                 const roomTypeIds = (roomTypes ?? []).map((r: any) => r.id).filter(Boolean);
-                // const bedsByRoomType: Record<string, { type: string; quantity: number }[]> = {};
+                const bedsByRoomType: Record<string, { type: 'single' | 'double' | 'king' | 'super_king'; count: number }[]> = {};
                 const roomPhotosByRoomType: Record<string, string[]> = {};
 
                 if (roomTypeIds.length) {
-                    // Skip loading beds
-                    /*
+                    // Load beds
                     const { data: bedsRows, error: bedsErr } = await supabase
                         .from('beds')
                         .select('room_type_id, bed_type, quantity')
                         .in('room_type_id', roomTypeIds);
-                    if (bedsErr) throw bedsErr;
-                    for (const b of bedsRows ?? []) {
-                        const rid = (b as any).room_type_id as string;
-                        if (!bedsByRoomType[rid]) bedsByRoomType[rid] = [];
-                        bedsByRoomType[rid].push({ type: (b as any).bed_type, quantity: (b as any).quantity });
+
+                    // Allow beds error to pass (table might not exist yet in older migrations, though required for this feature)
+                    if (!bedsErr && bedsRows) {
+                        for (const b of (bedsRows as any[])) {
+                            const rid = b.room_type_id as string;
+                            if (!bedsByRoomType[rid]) bedsByRoomType[rid] = [];
+                            bedsByRoomType[rid].push({ type: b.bed_type, count: b.quantity });
+                        }
                     }
-                    */
 
                     const { data: roomPhotoRows, error: roomPhotoErr } = await supabase
                         .from('room_type_photos')
@@ -365,12 +382,15 @@ export function HostListingsTab({ authUserId }: { authUserId: string | null }) {
                         return {
                             id: r.id,
                             name: r.name ?? '', // FIXED: roomName -> name
+                            quantity: r.room_count ?? 1,
                             guestCount: r.max_guests ?? 2,
-                            bedCount: 1, // Default, as we don't load beds
+                            bedCount: 1, // Default, calculated from beds if needed, but we use bedConfigurations now
+                            bedConfigurations: bedsByRoomType[r.id] ?? [],
                             bathroomCount: 1, // Default
                             bathroomType: bathroomType === 'private' ? 'private' : bathroomType === 'shared' ? 'shared' : undefined,
                             amenities: r.amenities ?? [],
                             pricePerNight: r.price_per_night != null ? String(r.price_per_night) : undefined,
+                            smokingAllowed: !!r.smoking_allowed,
                             photoUris: roomPhotosByRoomType[r.id] ?? [],
                         } as RoomDraftV3;
                     }),

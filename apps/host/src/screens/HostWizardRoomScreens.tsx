@@ -212,7 +212,9 @@ export function HostWizardV3RoomSummaryScreen({
                                 </View>
                                 <YStack flex={1}>
                                     <Text variant="titleMedium" fontWeight="600">{r.name || 'Untitled Room'}</Text>
-                                    <Text variant="bodyMedium" color="$onSurfaceVariant">{r.guestCount} guests • LKR {r.pricePerNight}</Text>
+                                    <Text variant="bodyMedium" color="$onSurfaceVariant">
+                                        {r.quantity ?? 1} units • {r.guestCount} guests • LKR {r.pricePerNight}
+                                    </Text>
                                 </YStack>
                                 <XStack>
                                     <IconButton icon="pencil" onPress={() => navigation.navigate('WizardV3RoomName', { sessionId: r.id })} />
@@ -259,6 +261,14 @@ function useRoomDraft(draft: ListingDraftV3, setDraft: (d: ListingDraftV3) => vo
         pricePerNight: '',
         amenities: [],
         photoUris: [],
+        quantity: 1,
+        smokingAllowed: false,
+        bedConfigurations: [
+            { type: 'single', count: 0 },
+            { type: 'double', count: 1 },
+            { type: 'king', count: 0 },
+            { type: 'super_king', count: 0 },
+        ],
     } as RoomDraftV3;
 
     const setRoom = (r: RoomDraftV3) => {
@@ -366,6 +376,39 @@ export function HostWizardV3RoomDetailsScreen({
     const scrollY = React.useRef(new Animated.Value(0)).current;
     const { sessionId } = route.params;
     const { room, setRoom } = useRoomDraft(draft, setDraft, sessionId);
+    const theme = useTheme();
+
+    const bedOptions = [
+        { type: 'single', label: 'Single bed', sub: '90 - 130 cm wide', icon: 'bed' },
+        { type: 'double', label: 'Double bed', sub: '131 - 150 cm wide', icon: 'bed-double' },
+        { type: 'king', label: 'Large bed (King size)', sub: '151 - 180 cm wide', icon: 'bed-king' },
+        { type: 'super_king', label: 'Extra-large double bed', sub: '181 - 210 cm wide', icon: 'bed-king' },
+    ] as const;
+
+    const updateBedCount = (type: string, count: number) => {
+        const currentConfigs = room.bedConfigurations ?? [];
+        const existingIndex = currentConfigs.findIndex((c) => c.type === type);
+        let nextConfigs = [...currentConfigs];
+
+        if (existingIndex >= 0) {
+            nextConfigs[existingIndex] = { ...nextConfigs[existingIndex], count };
+        } else {
+            nextConfigs.push({ type: type as any, count });
+        }
+
+        // derived bed count
+        const totalBeds = nextConfigs.reduce((acc, c) => acc + c.count, 0);
+
+        setRoom({
+            ...room,
+            bedConfigurations: nextConfigs,
+            bedCount: totalBeds,
+        });
+    };
+
+    const getBedCount = (type: string) => {
+        return (room.bedConfigurations ?? []).find((c) => c.type === type)?.count ?? 0;
+    };
 
     return (
         <WizardStepShell
@@ -375,27 +418,91 @@ export function HostWizardV3RoomDetailsScreen({
             onNext={() => navigation.navigate('WizardV3RoomBathroom', { sessionId })}
             nextLabel="Continue"
         >
-            <Card p="$3" borderRadius={12} backgroundColor="$surfaceVariant" mb="$4" variant="filled">
-                <XStack justifyContent="space-between" alignItems="center">
-                    <Text variant="bodyLarge">Guests</Text>
-                    <Stepper value={room.guestCount} onChange={(v) => setRoom({ ...room, guestCount: v })} min={1} />
-                </XStack>
-                <Separator my="$3" />
-                <XStack justifyContent="space-between" alignItems="center">
-                    <Text variant="bodyLarge">Beds</Text>
-                    <Stepper value={room.bedCount} onChange={(v) => setRoom({ ...room, bedCount: v })} min={1} />
-                </XStack>
-                <Separator my="$3" />
-                <XStack justifyContent="space-between" alignItems="center">
-                    <Text variant="bodyLarge">Room size (sqm)</Text>
+            <YStack gap="$4" mb="$4">
+                {/* Quantity */}
+                <YStack>
+                    <Text variant="titleMedium" fontWeight="600" mb="$2">How many rooms of this type do you have?</Text>
                     <Input
-                        value={room.roomSizeSqm ? String(room.roomSizeSqm) : ''}
-                        onChangeText={(t) => setRoom({ ...room, roomSizeSqm: numberFromText(t) })}
+                        value={String(room.quantity ?? 1)}
+                        onChangeText={(t) => setRoom({ ...room, quantity: numberFromText(t) || 1 })}
                         keyboardType="numeric"
                         width={100}
                     />
-                </XStack>
-            </Card>
+                </YStack>
+
+                {/* Beds */}
+                <YStack>
+                    <Text variant="titleMedium" fontWeight="600" mb="$3">Which beds are available in this room?</Text>
+                    <Card p="$0" borderRadius={12} variant="outlined" borderColor="$outlineVariant" overflow="hidden">
+                        <YStack>
+                            {bedOptions.map((opt, idx) => (
+                                <React.Fragment key={opt.type}>
+                                    <XStack alignItems="center" justifyContent="space-between" p="$3">
+                                        <XStack alignItems="center" gap="$3" flex={1}>
+                                            <Icon name={opt.icon} size={24} color={theme.onSurfaceVariant.get()} />
+                                            <YStack>
+                                                <Text variant="bodyLarge" fontWeight="500">{opt.label}</Text>
+                                                <Text variant="bodySmall" color="$onSurfaceVariant">{opt.sub}</Text>
+                                            </YStack>
+                                        </XStack>
+                                        <Stepper
+                                            value={getBedCount(opt.type)}
+                                            onChange={(v) => updateBedCount(opt.type, v)}
+                                            min={0}
+                                        />
+                                    </XStack>
+                                    {idx < bedOptions.length - 1 && <Separator />}
+                                </React.Fragment>
+                            ))}
+                        </YStack>
+                    </Card>
+                </YStack>
+
+                {/* Guests */}
+                <YStack>
+                    <Text variant="titleMedium" fontWeight="600" mb="$2">How many guests can stay in this room?</Text>
+                    <XStack alignItems="center">
+                        <Stepper
+                            value={room.guestCount}
+                            onChange={(v) => setRoom({ ...room, guestCount: v })}
+                            min={1}
+                        />
+                    </XStack>
+                </YStack>
+
+                {/* Size */}
+                <YStack>
+                    <Text variant="titleMedium" fontWeight="600" mb="$2">How big is this room?</Text>
+                    <Text variant="bodySmall" mb="$2" color="$onSurfaceVariant">Room size - optional</Text>
+                    <XStack gap="$2" alignItems="center">
+                        <Input
+                            value={room.roomSizeSqm ? String(room.roomSizeSqm) : ''}
+                            onChangeText={(t) => setRoom({ ...room, roomSizeSqm: numberFromText(t) })}
+                            keyboardType="numeric"
+                            width={120}
+                            placeholder="0"
+                        />
+                        <Card backgroundColor="$surfaceVariant" px="$3" py="$2" borderRadius={8} variant="filled">
+                            <Text>square metres</Text>
+                        </Card>
+                    </XStack>
+                </YStack>
+
+                {/* Smoking */}
+                <YStack>
+                    <Text variant="titleMedium" fontWeight="600" mb="$2">Is smoking allowed in this room?</Text>
+                    <XStack gap="$4">
+                        <TouchableOpacity onPress={() => setRoom({ ...room, smokingAllowed: true })} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon name={room.smokingAllowed ? 'radiobox-marked' : 'radiobox-blank'} size={24} color={theme.primary.get()} />
+                            <Text ml="$2" variant="bodyLarge">Yes</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setRoom({ ...room, smokingAllowed: false })} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Icon name={!room.smokingAllowed ? 'radiobox-marked' : 'radiobox-blank'} size={24} color={theme.primary.get()} />
+                            <Text ml="$2" variant="bodyLarge">No</Text>
+                        </TouchableOpacity>
+                    </XStack>
+                </YStack>
+            </YStack>
         </WizardStepShell>
     );
 }
