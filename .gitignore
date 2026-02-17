@@ -1,0 +1,16 @@
+node_modules
+.env
+.env.*
+.DS_Store
+
+# Expo
+.expo
+
+# Next
+.next
+out
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

@@ -1,0 +1,37 @@
+{
+  "name": "weinn",
+  "private": true,
+  "packageManager": "npm@11.6.4",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:guest": "npm run start --workspace @weinn/guest",
+    "dev:guest:tunnel": "npm run start --workspace @weinn/guest -- --tunnel",
+    "dev:guest:clear": "npm run start --workspace @weinn/guest -- -c",
+    "dev:guest:tunnel:clear": "npm run start --workspace @weinn/guest -- --tunnel --go -c",
+    "dev:host": "npm run start --workspace @weinn/host",
+    "dev:host:tunnel": "npm run start --workspace @weinn/host -- --tunnel",
+    "dev:host:clear": "npm run start --workspace @weinn/host -- -c",
+    "dev:host:tunnel:clear": "npm run start --workspace @weinn/host -- --tunnel --go -c",
+    "icons:build": "npm run build:icons --workspace @weinn/icons",
+    "lint": "npm -ws run lint",
+    "typecheck": "npm --workspaces run typecheck --if-present"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.10",
+    "@types/react-dom": "~19.1.10",
+    "@svgr/cli": "^8.1.0",
+    "svgo": "^4.0.0",
+    "typescript": "^5.6.3"
+  },
+  "overrides": {
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "dependencies": {
+    "expo-location": "~19.0.8",
+    "react-native-maps": "1.20.1"
+  }
+}

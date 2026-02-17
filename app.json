@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "owner": "madebyupendra",
+    "slug": "weinn-root",
+    "android": {
+      "package": "com.weinn.root"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "@weinn/icons",
+  "version": "0.0.1",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build:icons": "node scripts/build-icons.mjs"
+  },
+  "sideEffects": false,
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-svg": "*"
+  }
+}
