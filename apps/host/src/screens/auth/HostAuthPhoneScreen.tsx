@@ -67,11 +67,11 @@ export function HostAuthPhoneScreen({
                             <>
                                 {/* Brand Header */}
                                 <View style={{ alignItems: 'center', marginBottom: 48, marginTop: insets.top + 24 }}>
-                                    <View style={{ width: 80, height: 80, borderRadius: 24, backgroundColor: theme.tertiaryContainer.get(), alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
-                                        <Text variant="header" style={{ fontWeight: 'bold', color: theme.color.get() }}>H</Text>
+                                    <View style={{ width: 80, height: 80, borderRadius: 24, backgroundColor: theme.secondaryContainer.get(), alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
+                                        <Text variant="header" style={{ fontWeight: 'bold', color: theme.black.get() }}>H</Text>
                                     </View>
-                                    <Text variant="header" style={{ fontWeight: 'bold', textAlign: 'center', color: theme.color.get(), marginBottom: 8 }}>WeInn Host</Text>
-                                    <Text variant="body" style={{ textAlign: 'center', color: theme.gray11.get() }}>Manage your listings and bookings.</Text>
+                                    <Text variant="header" style={{ fontWeight: 'bold', textAlign: 'center', color: theme.black.get(), marginBottom: 8 }}>WeInn Host</Text>
+                                    <Text variant="body" style={{ textAlign: 'center', color: theme.gray500.get() }}>Manage your listings and bookings.</Text>
                                 </View>
 
                                 <YStack gap="$4">
@@ -92,7 +92,7 @@ export function HostAuthPhoneScreen({
                                         />
                                     </XStack>
                                     <View>
-                                        <Text variant="label" style={{ color: theme.gray11.get(), marginBottom: 8 }}>
+                                        <Text variant="label" style={{ color: theme.gray500.get(), marginBottom: 8 }}>
                                             We'll send you a 6-digit verification code.
                                         </Text>
                                         <Button
@@ -190,8 +190,8 @@ export function HostAuthProfileScreen({
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
                 <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 24 }}>
                     <View style={{ marginTop: insets.top + 24, marginBottom: 48, alignItems: 'center' }}>
-                        <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: theme.tertiaryContainer.get(), alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
-                            <Text variant="header" style={{ fontWeight: 'bold', color: theme.color.get() }}>H</Text>
+                        <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: theme.secondaryContainer.get(), alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
+                            <Text variant="header" style={{ fontWeight: 'bold', color: theme.black.get() }}>H</Text>
                         </View>
                         <Text variant="title" style={{ fontWeight: 'bold', textAlign: 'center' }}>Host Profile</Text>
                         <Text variant="body" style={{ textAlign: 'center', color: theme.gray11.get(), marginTop: 8 }}>

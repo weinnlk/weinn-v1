@@ -245,10 +245,10 @@ export function HostPaymentsScreen({
                             </Text>
                         </View>
                         <Chip
-                            icon={<Icon name={isPaid ? "check" : isOverdue ? "alert-circle-outline" : "clock-outline"} size={16} color={isPaid ? theme.onSecondaryContainer.get() : isOverdue ? theme.onErrorContainer.get() : theme.onSurfaceVariant.get()} />}
-                            style={{ backgroundColor: isPaid ? theme.secondaryContainer.get() : isOverdue ? theme.errorContainer.get() : theme.surfaceVariant.get() }}
+                            icon={<Icon name={isPaid ? "check" : isOverdue ? "alert-circle-outline" : "clock-outline"} size={16} color={isPaid ? theme.onSecondaryContainer.get() : isOverdue ? theme.error.get() : theme.onSurfaceVariant.get()} />}
+                            style={{ backgroundColor: isPaid ? theme.secondaryContainer.get() : isOverdue ? theme.errorBackground.get() : theme.surfaceVariant.get() }}
                         >
-                            <Text style={{ color: isPaid ? theme.onSecondaryContainer.get() : isOverdue ? theme.onErrorContainer.get() : theme.onSurfaceVariant.get(), fontSize: 12 }}>
+                            <Text style={{ color: isPaid ? theme.onSecondaryContainer.get() : isOverdue ? theme.error.get() : theme.onSurfaceVariant.get(), fontSize: 12 }}>
                                 {isPaid ? 'Paid' : isOverdue ? 'Overdue' : 'Due'}
                             </Text>
                         </Chip>
@@ -264,8 +264,8 @@ export function HostPaymentsScreen({
                 </Card>
 
                 {status ? (
-                    <View style={{ padding: 16, backgroundColor: theme.errorContainer.get(), borderRadius: 8 }}>
-                        <Text style={{ color: theme.onErrorContainer.get(), textAlign: 'center' }}>{status}</Text>
+                    <View style={{ padding: 16, backgroundColor: theme.errorBackground.get(), borderRadius: 8 }}>
+                        <Text style={{ color: theme.error.get(), textAlign: 'center' }}>{status}</Text>
                     </View>
                 ) : null}
 

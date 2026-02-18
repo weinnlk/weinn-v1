@@ -71,6 +71,12 @@ export const Text = styled(TText, {
                 lineHeight: '$4',
                 color: '$color',
             },
+            display: {
+                fontSize: '$10',
+                lineHeight: '$10',
+                fontWeight: 'bold',
+                color: '$color',
+            },
         },
     } as const,
 

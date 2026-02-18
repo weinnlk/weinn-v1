@@ -64,15 +64,15 @@ type DashboardBooking = {
 
 const BookingItem = React.memo(({ item, theme }: { item: DashboardBooking, theme: any }) => (
     <View style={{ paddingHorizontal: 16, marginBottom: 12 }}>
-        <Card variant="outlined" style={{ borderRadius: 12, backgroundColor: theme.background.get(), padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderColor: theme.outlineVariant.get() }}>
+        <Card variant="outlined" style={{ borderRadius: 12, backgroundColor: theme.surface.get(), padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderColor: theme.outline.get() }}>
             <Avatar
                 size="$4"
                 circular
-                fallback={<Text style={{ color: theme.color.get(), fontWeight: '600' }}>{item.guestName.charAt(0)}</Text>}
+                fallback={<Text style={{ color: theme.black.get(), fontWeight: '600' }}>{item.guestName.charAt(0)}</Text>}
             />
             <YStack flex={1}>
-                <Text variant="body" fontWeight="700" fontSize={16}>{item.guestName}</Text>
-                <Text variant="label" color="$gray11" fontSize={13} marginTop={2}>{item.propertyName}</Text>
+                <Text variant="body" fontWeight="700" fontSize={16} color="$gray900">{item.guestName}</Text>
+                <Text variant="label" color="$gray500" fontSize={13} marginTop={2}>{item.propertyName}</Text>
                 <XStack alignItems="center" marginTop={4} gap="$2">
                     <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: item.action === 'check-in' ? theme.success.get() : theme.warning.get() }} />
                     <Text variant="label" color={item.action === 'check-in' ? '$success' : '$warning'} fontWeight="600" fontSize={12}>
@@ -150,9 +150,9 @@ export function HostTodayScreen({ navigation }: { navigation: any }) {
     ), [theme]);
 
     return (
-        <View style={{ flex: 1, backgroundColor: theme.background.get() }}>
-            <View style={{ paddingHorizontal: 16, paddingTop: insets.top + 16, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: theme.background.get() }}>
-                <Text variant="header" style={{ fontSize: 32, fontWeight: '800', letterSpacing: -1 }}>Dashboard</Text>
+        <View style={{ flex: 1, backgroundColor: theme.gray25.get() }}>
+            <View style={{ paddingHorizontal: 16, paddingTop: insets.top + 16, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: theme.gray25.get() }}>
+                <Text variant="display" style={{ fontSize: 32, fontWeight: '800', letterSpacing: -1, color: theme.black.get() }}>Dashboard</Text>
                 <Avatar
                     circular
                     size="$4"
@@ -169,37 +169,37 @@ export function HostTodayScreen({ navigation }: { navigation: any }) {
                     <YStack gap="$4" paddingBottom="$4">
                         {/* Welcome Header */}
                         <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
-                            <Text variant="body" style={{ color: theme.gray11.get(), fontWeight: '500', textTransform: 'uppercase', fontSize: 12 }}>{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</Text>
-                            <Text variant="header" style={{ fontWeight: '800', fontSize: 28, marginTop: 4 }}>Good morning, Host</Text>
+                            <Text variant="body" style={{ color: theme.gray500.get(), fontWeight: '500', textTransform: 'uppercase', fontSize: 12 }}>{new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}</Text>
+                            <Text variant="header" style={{ fontWeight: '800', fontSize: 28, marginTop: 4, color: theme.black.get() }}>Good morning, Host</Text>
                         </View>
 
                         {/* Stats Overview */}
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, gap: 12 }}>
-                            <Card variant="outlined" style={{ padding: 16, borderRadius: 12, width: 150, backgroundColor: theme.background.get(), borderWidth: 1, borderColor: theme.outline.get() }}>
-                                <Text variant="label" style={{ color: theme.gray11.get(), marginBottom: 4 }}>Earnings</Text>
-                                <Text variant="header" style={{ fontWeight: '800', fontSize: 24 }}>${stats.earnings}</Text>
+                            <Card variant="outlined" style={{ padding: 16, borderRadius: 12, width: 150, backgroundColor: theme.surface.get(), borderWidth: 1, borderColor: theme.outline.get() }}>
+                                <Text variant="label" style={{ color: theme.gray500.get(), marginBottom: 4 }}>Earnings</Text>
+                                <Text variant="header" style={{ fontWeight: '800', fontSize: 24, color: theme.black.get() }}>${stats.earnings}</Text>
                             </Card>
-                            <Card variant="outlined" style={{ padding: 16, borderRadius: 12, width: 140, backgroundColor: theme.background.get(), borderWidth: 1, borderColor: theme.outline.get() }}>
-                                <Text variant="label" style={{ color: theme.gray11.get(), marginBottom: 4 }}>Occupancy</Text>
-                                <Text variant="header" style={{ fontWeight: '800', fontSize: 24 }}>{stats.occupancy}%</Text>
+                            <Card variant="outlined" style={{ padding: 16, borderRadius: 12, width: 140, backgroundColor: theme.surface.get(), borderWidth: 1, borderColor: theme.outline.get() }}>
+                                <Text variant="label" style={{ color: theme.gray500.get(), marginBottom: 4 }}>Occupancy</Text>
+                                <Text variant="header" style={{ fontWeight: '800', fontSize: 24, color: theme.black.get() }}>{stats.occupancy}%</Text>
                             </Card>
-                            <Card variant="outlined" style={{ padding: 16, borderRadius: 12, width: 140, backgroundColor: theme.background.get(), borderWidth: 1, borderColor: theme.outline.get() }}>
-                                <Text variant="label" style={{ color: theme.gray11.get(), marginBottom: 4 }}>Rating</Text>
-                                <Text variant="header" style={{ fontWeight: '800', fontSize: 24 }}>{stats.rating} ★</Text>
+                            <Card variant="outlined" style={{ padding: 16, borderRadius: 12, width: 140, backgroundColor: theme.surface.get(), borderWidth: 1, borderColor: theme.outline.get() }}>
+                                <Text variant="label" style={{ color: theme.gray500.get(), marginBottom: 4 }}>Rating</Text>
+                                <Text variant="header" style={{ fontWeight: '800', fontSize: 24, color: theme.black.get() }}>{stats.rating} ★</Text>
                             </Card>
                         </ScrollView>
 
                         {/* Happening Today */}
                         <View style={{ paddingHorizontal: 16, gap: 12 }}>
-                            <Text variant="title" style={{ fontWeight: 'bold' }}>Happening Today</Text>
+                            <Text variant="title" style={{ fontWeight: 'bold', color: theme.black.get() }}>Happening Today</Text>
                             {/* Custom Segmented Control */}
-                            <XStack backgroundColor="$gray3" borderRadius="$4" padding="$1">
+                            <XStack backgroundColor="$gray100" borderRadius="$4" padding="$1">
                                 <Button
                                     flex={1}
                                     variant={filter === 'check-ins' ? 'secondary' : 'ghost'}
                                     onPress={() => setFilter('check-ins')}
                                     size="$3"
-                                    icon={<Icon name="login" size={18} color={filter === 'check-ins' ? theme.onSecondary.get() : theme.gray11.get()} />}
+                                    icon={<Icon name="login" size={18} color={filter === 'check-ins' ? theme.black.get() : theme.gray500.get()} />}
                                 >
                                     Check-ins
                                 </Button>
@@ -208,7 +208,7 @@ export function HostTodayScreen({ navigation }: { navigation: any }) {
                                     variant={filter === 'check-outs' ? 'secondary' : 'ghost'}
                                     onPress={() => setFilter('check-outs')}
                                     size="$3"
-                                    icon={<Icon name="logout" size={18} color={filter === 'check-outs' ? theme.onSecondary.get() : theme.gray11.get()} />}
+                                    icon={<Icon name="logout" size={18} color={filter === 'check-outs' ? theme.black.get() : theme.gray500.get()} />}
                                 >
                                     Check-outs
                                 </Button>
@@ -219,24 +219,24 @@ export function HostTodayScreen({ navigation }: { navigation: any }) {
                 renderItem={renderItem}
                 ListEmptyComponent={
                     <View style={{ alignItems: 'center', padding: 32 }}>
-                        <Text variant="body" style={{ color: theme.gray11.get() }}>No {filter} today.</Text>
+                        <Text variant="body" style={{ color: theme.gray500.get() }}>No {filter} today.</Text>
                     </View>
                 }
                 ListFooterComponent={
                     <View style={{ paddingHorizontal: 16, marginTop: 16, gap: 16 }}>
-                        <Text variant="title" style={{ fontWeight: '800' }}>Quick Actions</Text>
+                        <Text variant="title" style={{ fontWeight: '800', color: theme.black.get() }}>Quick Actions</Text>
                         <XStack gap="$3">
-                            <Card variant="outlined" onPress={() => navigation.navigate('Listings', { screen: 'WizardV3_Intro' })} style={{ flex: 1, padding: 16, borderRadius: 12, alignItems: 'center', gap: 12, borderColor: theme.outline.get() }}>
-                                <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: theme.gray5.get(), alignItems: 'center', justifyContent: 'center' }}>
-                                    <Icon name="plus" size={24} color={theme.color.get()} />
+                            <Card variant="outlined" onPress={() => navigation.navigate('Listings', { screen: 'WizardV3_Intro' })} style={{ flex: 1, padding: 16, borderRadius: 12, alignItems: 'center', gap: 12, borderColor: theme.outline.get(), backgroundColor: theme.surface.get() }}>
+                                <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: theme.gray50.get(), alignItems: 'center', justifyContent: 'center' }}>
+                                    <Icon name="plus" size={24} color={theme.black.get()} />
                                 </View>
-                                <Text variant="label" style={{ fontWeight: '700', textAlign: 'center' }}>Create Listing</Text>
+                                <Text variant="label" style={{ fontWeight: '700', textAlign: 'center', color: theme.black.get() }}>Create Listing</Text>
                             </Card>
-                            <Card variant="outlined" onPress={() => navigation.navigate('Bookings')} style={{ flex: 1, padding: 16, borderRadius: 12, alignItems: 'center', gap: 12, borderColor: theme.outline.get() }}>
-                                <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: theme.gray5.get(), alignItems: 'center', justifyContent: 'center' }}>
-                                    <Icon name="calendar" size={24} color={theme.color.get()} />
+                            <Card variant="outlined" onPress={() => navigation.navigate('Bookings')} style={{ flex: 1, padding: 16, borderRadius: 12, alignItems: 'center', gap: 12, borderColor: theme.outline.get(), backgroundColor: theme.surface.get() }}>
+                                <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: theme.gray50.get(), alignItems: 'center', justifyContent: 'center' }}>
+                                    <Icon name="calendar" size={24} color={theme.black.get()} />
                                 </View>
-                                <Text variant="label" style={{ fontWeight: '700', textAlign: 'center' }}>Calendar</Text>
+                                <Text variant="label" style={{ fontWeight: '700', textAlign: 'center', color: theme.black.get() }}>Calendar</Text>
                             </Card>
                         </XStack>
                     </View>
