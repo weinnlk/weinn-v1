@@ -5,8 +5,8 @@ import { Text, Button, Input, useTheme, Card, XStack, YStack } from '@weinn/ui';
 // @ts-ignore
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { supabase } from '@weinn/core';
-import { getDialCodeByIso2 } from '../utils/phone';
-import { OtpInput } from '../components/OtpInput';
+import { getDialCodeByIso2 } from '../../utils/phone';
+import { OtpInput } from '../../components/OtpInput';
 
 // Types
 type Profile = {

@@ -1,13 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
-
-import { Provider as PaperProvider, Text, Button } from 'react-native-paper';
-import { supabase, AuthProvider, useAuth } from '@weinn/core';
-import { HostMain } from './src/screens/HostMain';
-import { HostAuthPhoneScreen, HostAuthProfileScreen, HostAuthBecomeHostScreen } from './src/screens/HostAuthScreens';
-import { weinnTheme } from './src/theme';
-import { getDialCodeByIso2 } from './src/utils/phone';
 import { View } from 'react-native';
+import { supabase, AuthProvider, useAuth } from '@weinn/core';
+import { WeInnProvider, Text, Button } from '@weinn/ui';
+import { HostMain } from './src/screens/HostMain';
+import { HostAuthPhoneScreen, HostAuthProfileScreen, HostAuthBecomeHostScreen } from './src/screens/auth/HostAuthPhoneScreen';
+import { getDialCodeByIso2 } from './src/utils/phone';
 
 function HostAppShell() {
   const { user, profile, loading: authLoading, refreshProfile, signOut } = useAuth();
@@ -225,15 +223,11 @@ function HostAppShell() {
   );
 }
 
-import { WeInnProvider } from '@weinn/ui';
-
 export default function App() {
   return (
     <AuthProvider>
       <WeInnProvider>
-        <PaperProvider theme={weinnTheme}>
-          <HostAppShell />
-        </PaperProvider>
+        <HostAppShell />
       </WeInnProvider>
     </AuthProvider>
   );

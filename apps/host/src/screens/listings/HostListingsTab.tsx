@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Alert } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { supabase } from '@weinn/core';
-import { ListingDraftV3, RoomDraftV3 } from '../types';
-import { WizardV3Context } from '../components/WizardStepShell';
+import { ListingDraftV3, RoomDraftV3 } from '../../types';
+import { WizardV3Context } from '../../components/WizardStepShell';
 import { HostMyListingsScreen } from './HostMyListingsScreen';
 
 // Wizard Core Screens
@@ -84,10 +84,10 @@ export function HostListingsTab({ authUserId }: { authUserId: string | null }) {
 
     const saveDraftToSupabaseV3 = React.useCallback(
         async (userId: string, draft: ListingDraftV3) => {
-            console.log('saveDraftToSupabaseV3 STARTED', draft.propertyId);
+
             const propertyId = draft.propertyId;
             if (!propertyId) {
-                console.log('saveDraftToSupabaseV3 ABORT: No propertyId');
+
                 return;
             }
 
@@ -414,7 +414,7 @@ export function HostListingsTab({ authUserId }: { authUserId: string | null }) {
         if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
         autosaveTimerRef.current = setTimeout(() => {
             // TEMPORARILY DISABLED TO DEBUG CRASH
-            console.log('Skipping autosave for debugging');
+
             /*
             saveDraftToSupabaseV3(authUserId, draftV3).catch((e) => {
                 console.error('Autosave failed:', e);

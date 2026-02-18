@@ -20,4 +20,5 @@ export {
     Theme,
     useTheme,
     Separator,
+    Spinner,
 } from 'tamagui';

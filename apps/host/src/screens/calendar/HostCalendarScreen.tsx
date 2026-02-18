@@ -5,8 +5,8 @@ import { useAuth, supabase } from '@weinn/core';
 import { Text, Card, YStack, XStack, Button, Input, Separator, useTheme } from '@weinn/ui';
 import { CalendarList, DateData } from 'react-native-calendars';
 import { format, addMonths, startOfMonth, endOfMonth } from 'date-fns';
-import { ManageDateSheet } from '../components/ManageDateSheet';
-import { CalendarDayData } from '../types';
+import { ManageDateSheet } from '../../components/ManageDateSheet';
+import { CalendarDayData } from '../../types';
 
 export function HostCalendarScreen() {
     const { user } = useAuth();
@@ -148,7 +148,7 @@ export function HostCalendarScreen() {
 
             <CalendarList
                 // Callback which gets executed when visible months change in scroll view
-                onVisibleMonthsChange={(months) => { console.log('now these months are visible', months); }}
+                onVisibleMonthsChange={(months) => { }}
                 // Max amount of months allowed to scroll to the past. Default = 50
                 pastScrollRange={0}
                 // Max amount of months allowed to scroll to the future. Default = 50
@@ -161,7 +161,7 @@ export function HostCalendarScreen() {
                 markingType={'custom'}
                 markedDates={markedDates}
 
-                dayComponent={({ date, state, marking }: { date?: DateData, state: any, marking: any }) => {
+                dayComponent={({ date, state, marking }: { date?: DateData, state?: any, marking?: any }) => {
                     if (!date) return <View />;
                     return (
                         <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', flex: 1, height: 60, backgroundColor: marking?.customStyles?.container?.backgroundColor || 'white' }}

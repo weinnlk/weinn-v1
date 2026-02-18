@@ -1,4 +1,6 @@
-import { HomeContentAction, HomeContentItem } from './types';
+export * from './phone';
+
+import { HomeContentAction, HomeContentItem } from '../types';
 
 export function numberFromText(t: string): number {
     const n = Number(String(t ?? '').replace(/\D/g, '') || '0');

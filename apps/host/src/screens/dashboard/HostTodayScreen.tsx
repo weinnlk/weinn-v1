@@ -62,6 +62,29 @@ type DashboardBooking = {
     action: BookingAction;
 };
 
+const BookingItem = React.memo(({ item, theme }: { item: DashboardBooking, theme: any }) => (
+    <View style={{ paddingHorizontal: 16, marginBottom: 12 }}>
+        <Card variant="outlined" style={{ borderRadius: 12, backgroundColor: theme.background.get(), padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderColor: theme.outlineVariant.get() }}>
+            <Avatar
+                size="$4"
+                circular
+                fallback={<Text style={{ color: theme.color.get(), fontWeight: '600' }}>{item.guestName.charAt(0)}</Text>}
+            />
+            <YStack flex={1}>
+                <Text variant="body" fontWeight="700" fontSize={16}>{item.guestName}</Text>
+                <Text variant="label" color="$gray11" fontSize={13} marginTop={2}>{item.propertyName}</Text>
+                <XStack alignItems="center" marginTop={4} gap="$2">
+                    <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: item.action === 'check-in' ? theme.success.get() : theme.warning.get() }} />
+                    <Text variant="label" color={item.action === 'check-in' ? '$success' : '$warning'} fontWeight="600" fontSize={12}>
+                        {item.action === 'check-in' ? 'Check-in' : 'Check-out'} at {item.time}
+                    </Text>
+                </XStack>
+            </YStack>
+            <Button variant="secondary" size="$3" iconAfter={<Icon name="chevron-right" size={20} />} chromeless />
+        </Card>
+    </View>
+));
+
 export function HostTodayScreen({ navigation }: { navigation: any }) {
     const insets = useSafeAreaInsets();
     const theme = useTheme();
@@ -121,6 +144,10 @@ export function HostTodayScreen({ navigation }: { navigation: any }) {
     const displayedBookings = todaysBookings.filter(b =>
         filter === 'check-ins' ? b.action === 'check-in' : b.action === 'check-out'
     );
+
+    const renderItem = React.useCallback(({ item }: { item: DashboardBooking }) => (
+        <BookingItem item={item} theme={theme} />
+    ), [theme]);
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.background.get() }}>
@@ -189,28 +216,7 @@ export function HostTodayScreen({ navigation }: { navigation: any }) {
                         </View>
                     </YStack>
                 }
-                renderItem={({ item }) => (
-                    <View style={{ paddingHorizontal: 16, marginBottom: 12 }}>
-                        <Card variant="outlined" style={{ borderRadius: 12, backgroundColor: theme.background.get(), padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, borderColor: theme.outlineVariant.get() }}>
-                            <Avatar
-                                size="$4"
-                                circular
-                                fallback={<Text style={{ color: theme.color.get(), fontWeight: '600' }}>{item.guestName.charAt(0)}</Text>}
-                            />
-                            <YStack flex={1}>
-                                <Text variant="body" fontWeight="700" fontSize={16}>{item.guestName}</Text>
-                                <Text variant="label" color="$gray11" fontSize={13} marginTop={2}>{item.propertyName}</Text>
-                                <XStack alignItems="center" marginTop={4} gap="$2">
-                                    <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: item.action === 'check-in' ? theme.success.get() : theme.warning.get() }} />
-                                    <Text variant="label" color={item.action === 'check-in' ? '$success' : '$warning'} fontWeight="600" fontSize={12}>
-                                        {item.action === 'check-in' ? 'Check-in' : 'Check-out'} at {item.time}
-                                    </Text>
-                                </XStack>
-                            </YStack>
-                            <Button variant="secondary" size="$3" iconAfter={<Icon name="chevron-right" size={20} />} chromeless />
-                        </Card>
-                    </View>
-                )}
+                renderItem={renderItem}
                 ListEmptyComponent={
                     <View style={{ alignItems: 'center', padding: 32 }}>
                         <Text variant="body" style={{ color: theme.gray11.get() }}>No {filter} today.</Text>
@@ -251,88 +257,4 @@ export function HostTodayScreen({ navigation }: { navigation: any }) {
     );
 }
 
-export function ContentModalScreen({ route, navigation }: { route: any; navigation: any }) {
-    const insets = useSafeAreaInsets();
-    const theme = useTheme();
-    const item = (route?.params?.item ?? null) as HomeContentItem | null;
-    const cta = item ? getCta(item) : null;
 
-    if (!item) return null;
-
-    return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: theme.background.get() }} edges={['top']}>
-            <Pressable
-                onPress={() => navigation.goBack()}
-                hitSlop={12}
-                style={{
-                    position: 'absolute',
-                    right: 12,
-                    zIndex: 10,
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                    backgroundColor: 'rgba(17, 24, 39, 0.55)',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    top: insets.top + 8,
-                }}
-            >
-                <Text
-                    style={{
-                        color: '#fff',
-                        fontSize: 22,
-                        lineHeight: 22,
-                        fontWeight: '700',
-                        marginTop: -2,
-                    }}
-                >
-                    ×
-                </Text>
-            </Pressable>
-            <Animated.ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 24 + insets.bottom }}>
-                {item.image_url ? (
-                    <Image source={{ uri: item.image_url }} style={{ width: '100%', height: 220, resizeMode: 'cover' }} />
-                ) : null}
-
-                <View style={{ paddingHorizontal: 16, paddingTop: 16, gap: 12 }}>
-                    <View style={{ gap: 6 }}>
-                        <Text variant="header" style={{ fontWeight: '800' }}>
-                            {item.title ?? ''}
-                        </Text>
-                        {item.subtitle ? (
-                            <Text variant="body" style={{ color: theme.gray11.get() }}>
-                                {item.subtitle}
-                            </Text>
-                        ) : null}
-                    </View>
-
-                    <Markdown
-                        style={{
-                            body: { color: theme.color.get() },
-                            heading1: { color: theme.color.get() },
-                            heading2: { color: theme.color.get() },
-                            paragraph: { color: theme.color.get() },
-                        }}
-                    >
-                        {typeof item?.payload?.body_markdown === 'string' ? item.payload.body_markdown : ''}
-                    </Markdown>
-
-                    {cta ? (
-                        <Button
-                            variant="primary"
-                            onPress={() => {
-                                if (cta.action.type === 'navigate_tab') {
-                                    navigation.navigate('Tabs', { screen: cta.action.tab });
-                                    return;
-                                }
-                            }}
-                            marginTop="$2"
-                        >
-                            {cta.label}
-                        </Button>
-                    ) : null}
-                </View>
-            </Animated.ScrollView>
-        </SafeAreaView>
-    );
-}

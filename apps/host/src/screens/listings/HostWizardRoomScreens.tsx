@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Image, Animated, ScrollView, useWindowDimensions, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text, Button, Input, Card, XStack, YStack, Separator, Chip, IconButton } from '@weinn/ui';
-import { WizardStepShell } from '../components/WizardStepShell';
-import { ListingDraftV3, RoomDraftV3, VillaBedroomDraftV3 } from '../types';
+import { WizardStepShell } from '../../components/WizardStepShell';
+import { ListingDraftV3, RoomDraftV3, VillaBedroomDraftV3 } from '../../types';
 import * as ImagePicker from 'expo-image-picker';
-import { Stepper, WizardV3TimeSelect } from '../components/HostWizardComponents';
-import { numberFromText } from '../utils';
+import { Stepper, WizardV3TimeSelect } from '../../components/HostWizardComponents';
+import { numberFromText } from '../../utils';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'tamagui';
 
@@ -207,8 +207,8 @@ export function HostWizardV3RoomSummaryScreen({
                     <Card key={r.id} style={{ borderRadius: 12, overflow: 'hidden' }} variant="elevated">
                         <TouchableOpacity onPress={() => navigation.navigate('WizardV3RoomName', { sessionId: r.id })}>
                             <XStack alignItems="center" p="$3">
-                                <View style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.primaryContainer.get(), marginRight: 16 }}>
-                                    <Icon name="bed" color={theme.onPrimaryContainer.get()} size={20} />
+                                <View style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.primaryContainer?.get(), marginRight: 16 }}>
+                                    <Icon name="bed" color={theme.onPrimaryContainer?.get()} size={20} />
                                 </View>
                                 <YStack flex={1}>
                                     <Text variant="titleMedium" fontWeight="600">{r.name || 'Untitled Room'}</Text>
@@ -321,7 +321,7 @@ export function HostWizardV3RoomNameScreen({
     React.useEffect(() => {
         const timer = setTimeout(() => {
             if (localName !== room.name) {
-                console.log('Debounced update for room name:', localName);
+
                 try {
                     setRoom({ ...room, name: localName });
                 } catch (e) {

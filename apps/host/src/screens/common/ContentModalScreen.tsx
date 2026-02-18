@@ -4,8 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, Text, Card, IconButton } from '@weinn/ui';
 import { useTheme } from 'tamagui';
 import Markdown from 'react-native-markdown-display';
-import { HomeContentItem } from '../types';
-import { getCta } from '../utils';
+import { HomeContentItem } from '../../types';
+import { getCta } from '../../utils';
 
 // Replicating styles for Markdown to match theme
 const getMarkdownStyles = (theme: any) => ({
@@ -39,10 +39,8 @@ export function ContentModalScreen({ route, navigation }: { route: any; navigati
                         <View style={{ height: insets.top + 60 }} />
                     )}
 
-                    {/* Floating Close Button */}
                     <IconButton
                         icon="close"
-                        variant="ghost"
                         size={24}
                         onPress={() => navigation.goBack()}
                         style={{

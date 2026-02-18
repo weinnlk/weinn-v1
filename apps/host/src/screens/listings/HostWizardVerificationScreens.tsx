@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Animated, Alert } from 'react-native';
 import { Text, Button, Input, Card, XStack, YStack, Separator, IconButton } from '@weinn/ui';
-import { WizardStepShell } from '../components/WizardStepShell';
-import { ListingDraftV3 } from '../types';
+import { WizardStepShell } from '../../components/WizardStepShell';
+import { ListingDraftV3 } from '../../types';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'tamagui';
 

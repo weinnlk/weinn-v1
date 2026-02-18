@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Image, Animated, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { Text, Button, Input, Card, XStack, YStack, Separator, Spinner, Chip } from '@weinn/ui';
-import { WizardStepShell } from '../components/WizardStepShell';
-import { ListingDraftV3, WizardV3PropertyCategory } from '../types';
+import { WizardStepShell } from '../../components/WizardStepShell';
+import { ListingDraftV3, WizardV3PropertyCategory } from '../../types';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
+import * as ImagePicker from 'expo-image-picker';
 import MapView, { Marker } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from 'tamagui';
@@ -146,12 +147,12 @@ export function HostWizardV3ConfirmTypeScreen({ navigation, draft }: { navigatio
     return (
         <WizardStepShell title="Confirm" navigation={navigation} scrollY={scrollY} onNext={() => navigation.navigate('WizardV3Location')} nextLabel="Continue">
             <YStack alignItems="center" gap="$5" py="$8">
-                <View style={{ width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.primaryContainer.get() }}>
-                    <Icon name="check-bold" size={40} color={theme.onPrimaryContainer.get()} />
+                <View style={{ width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.primaryContainer?.get() }}>
+                    <Icon name="check-bold" size={40} color={theme.onPrimaryContainer?.get()} />
                 </View>
                 <YStack alignItems="center" gap="$2">
                     <Text variant="headlineSmall" textAlign="center">You're listing:</Text>
-                    <Text variant="displayMedium" textAlign="center" color="$primary" fontWeight="bold">
+                    <Text variant="headlineMedium" textAlign="center" color="$primary" fontWeight="bold">
                         {draft.propertyTypeLabel ?? 'A property'}
                     </Text>
                 </YStack>

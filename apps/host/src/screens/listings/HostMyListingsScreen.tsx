@@ -6,6 +6,55 @@ import { useTheme, Text, Card, Button, Chip, XStack, YStack, IconButton } from '
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { supabase } from '@weinn/core';
 
+const ListingItem = React.memo(({ item, imageUri, theme, navigation }: { item: any, imageUri: string | null, theme: any, navigation: any }) => {
+    const isDraft = item.status === 'draft' || item.status === 'rejected';
+
+    return (
+        <Card variant="outlined" style={{ borderRadius: 12, backgroundColor: theme.background.get(), overflow: 'hidden', padding: 0, flexDirection: 'row', borderColor: theme.outlineVariant.get() }}>
+            {/* Image Section */}
+            <View style={{ width: 120, backgroundColor: theme.gray5.get() }}>
+                {imageUri ? (
+                    <Image source={{ uri: imageUri ?? undefined }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
+                ) : (
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Icon name="image-off-outline" size={32} color={theme.gray8.get()} />
+                    </View>
+                )}
+            </View>
+
+            {/* Content Section */}
+            <View style={{ flex: 1, padding: 16, justifyContent: 'space-between', gap: 8 }}>
+                <View>
+                    <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={4}>
+                        <Chip
+                            variant="filled"
+                            backgroundColor={item.status === 'approved' ? '$success' : item.status === 'draft' ? '$gray5' : '$warning'}
+                            color={item.status === 'approved' ? 'white' : item.status === 'draft' ? '$gray11' : 'black'}
+                        >
+                            {item.status === 'draft' ? 'Draft' : item.status === 'submitted' ? 'Pending' : item.status === 'approved' ? 'Active' : item.status}
+                        </Chip>
+                    </XStack>
+                    <Text variant="body" style={{ fontWeight: '800', fontSize: 16 }} numberOfLines={1}>
+                        {item.title ?? 'Untitled Property'}
+                    </Text>
+                    <Text variant="label" style={{ color: theme.gray11.get(), fontSize: 13, marginTop: 2 }}>
+                        Updated {new Date(item.updated_at).toLocaleDateString()}
+                    </Text>
+                </View>
+
+                <Button
+                    variant="outline"
+                    size="$3"
+                    onPress={() => navigation.navigate('WizardV3Start', { propertyId: item.id })}
+                    borderColor="$outline"
+                >
+                    {isDraft ? 'Resume Editing' : 'Edit Details'}
+                </Button>
+            </View>
+        </Card>
+    );
+});
+
 export function HostMyListingsScreen({
     navigation,
     authUserId,
@@ -52,6 +101,17 @@ export function HostMyListingsScreen({
         return properties.filter(p => p.status === 'draft' || p.status === 'rejected');
     }, [properties, filter]);
 
+    const renderItem = React.useCallback(({ item }: { item: any }) => {
+        return (
+            <ListingItem
+                item={item}
+                imageUri={propertyImages[item.id] ?? null}
+                theme={theme}
+                navigation={navigation}
+            />
+        );
+    }, [propertyImages, theme, navigation]);
+
     return (
         <View style={{ flex: 1, backgroundColor: theme.background.get() }}>
             <View style={{ paddingHorizontal: 16, paddingTop: insets.top + 16, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: theme.background.get() }}>
@@ -85,57 +145,7 @@ export function HostMyListingsScreen({
                 contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 80 + insets.bottom, gap: 16 }}
                 data={filteredProperties}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => {
-                    const imageUri = propertyImages[item.id];
-                    const isDraft = item.status === 'draft' || item.status === 'rejected';
-
-                    return (
-                    return (
-                        <Card variant="outlined" style={{ borderRadius: 12, backgroundColor: theme.background.get(), overflow: 'hidden', padding: 0, flexDirection: 'row', borderColor: theme.outlineVariant.get() }}>
-                            {/* Image Section */}
-                            <View style={{ width: 120, backgroundColor: theme.gray5.get() }}>
-                                {imageUri ? (
-                                    <Image source={{ uri: imageUri ?? undefined }} style={{ width: '100%', height: '100%' }} resizeMode="cover" />
-                                ) : (
-                                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                                        <Icon name="image-off-outline" size={32} color={theme.gray8.get()} />
-                                    </View>
-                                )}
-                            </View>
-
-                            {/* Content Section */}
-                            <View style={{ flex: 1, padding: 16, justifyContent: 'space-between', gap: 8 }}>
-                                <View>
-                                    <XStack justifyContent="space-between" alignItems="flex-start" marginBottom={4}>
-                                        <Chip
-                                            variant="filled"
-                                            backgroundColor={item.status === 'approved' ? '$success' : item.status === 'draft' ? '$gray5' : '$warning'}
-                                            color={item.status === 'approved' ? 'white' : item.status === 'draft' ? '$gray11' : 'black'}
-                                        >
-                                            {item.status === 'draft' ? 'Draft' : item.status === 'submitted' ? 'Pending' : item.status === 'approved' ? 'Active' : item.status}
-                                        </Chip>
-                                    </XStack>
-                                    <Text variant="body" style={{ fontWeight: '800', fontSize: 16 }} numberOfLines={1}>
-                                        {item.title ?? 'Untitled Property'}
-                                    </Text>
-                                    <Text variant="label" style={{ color: theme.gray11.get(), fontSize: 13, marginTop: 2 }}>
-                                        Updated {new Date(item.updated_at).toLocaleDateString()}
-                                    </Text>
-                                </View>
-
-                                <Button
-                                    variant="outline"
-                                    size="$3"
-                                    onPress={() => navigation.navigate('WizardV3Start', { propertyId: item.id })}
-                                    borderColor="$outline"
-                                >
-                                    {isDraft ? 'Resume Editing' : 'Edit Details'}
-                                </Button>
-                            </View>
-                        </Card>
-                    );
-
-                }}
+                renderItem={renderItem}
                 ListEmptyComponent={
                     <View style={{ padding: 32, alignItems: 'center', gap: 16, marginTop: 40 }}>
                         <Icon name="home-city-outline" size={64} color={theme.gray8.get()} />
